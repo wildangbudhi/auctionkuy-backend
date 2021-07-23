@@ -1,7 +1,9 @@
 package domain
 
 import (
+	"crypto/rsa"
 	"fmt"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -9,16 +11,18 @@ import (
 type JWT struct {
 	payload   jwt.MapClaims
 	token     string
+	alg       jwt.SigningMethod
 	secretKey []byte
 }
 
-func NewJWT(token string, secretKey []byte) (*JWT, error) {
+func NewJWT(token string, secretKey []byte, alg jwt.SigningMethod) (*JWT, error) {
 
 	var err error
 
 	var authToken JWT = JWT{
 		token:     token,
 		secretKey: secretKey,
+		alg:       alg,
 	}
 
 	err = authToken.decodeToken()
@@ -31,13 +35,14 @@ func NewJWT(token string, secretKey []byte) (*JWT, error) {
 
 }
 
-func NewJWTFromPayload(payload map[string]interface{}, secretKey []byte) (*JWT, error) {
+func NewJWTFromPayload(payload map[string]interface{}, secretKey []byte, alg jwt.SigningMethod) (*JWT, error) {
 
 	var err error
 
 	var authToken JWT = JWT{
 		payload:   payload,
 		secretKey: secretKey,
+		alg:       alg,
 	}
 
 	err = authToken.encodeToken()
@@ -61,8 +66,18 @@ func (obj *JWT) GetPayload() map[string]interface{} {
 func (obj *JWT) decodeToken() error {
 	token, err := jwt.Parse(obj.token, func(token *jwt.Token) (interface{}, error) {
 
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Token Auth Invalid")
+		if strings.HasPrefix(obj.alg.Alg(), "RS") {
+
+			var err error
+			var key *rsa.PublicKey
+
+			key, err = jwt.ParseRSAPublicKeyFromPEM(obj.secretKey)
+
+			if err != nil {
+				return "", fmt.Errorf("validate: parse key: %w", err)
+			}
+
+			return key, nil
 		}
 
 		return obj.secretKey, nil
@@ -86,7 +101,7 @@ func (obj *JWT) decodeToken() error {
 
 func (obj *JWT) encodeToken() error {
 
-	aksesToken := jwt.NewWithClaims(jwt.SigningMethodHS512, obj.payload)
+	aksesToken := jwt.NewWithClaims(obj.alg, obj.payload)
 
 	token, err := aksesToken.SignedString(obj.secretKey)
 

@@ -110,6 +110,16 @@ func NewServer() (*Server, error) {
 
 	server.RedisDB = rdb
 
+	var phoneNumberTrie *Trie
+	var phoneNumberMaps map[string]string
+
+	phoneNumberTrie, phoneNumberMaps = NewCountryDictionary()
+
+	server.Config.CountryData = CountryDict{
+		PhoneNumberPrefixChecker: phoneNumberTrie,
+		PhoneNumberMaps:          phoneNumberMaps,
+	}
+
 	log.SetFlags(log.Ldate | log.Ltime | log.Llongfile)
 
 	gin.SetMode(server.Config.State)

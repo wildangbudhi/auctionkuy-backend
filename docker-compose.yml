@@ -46,22 +46,22 @@ services:
         ports:
             - "9000:9000"
 
-    # api:
-    #     container_name: auctionkuy-api
-    #     build: .
-    #     restart: always
-    #     environment: 
-    #         GIN_MODE: 'debug'
-    #         SERVER_HOST : ':8081'
-    #         MAX_PROCESS_NUMBER: '2'
-    #         RATE_LIMIT: '5'
-    #         MYSQL_HOST: 'mysqldb'
-    #         MYSQL_PORT: '3306'
-    #         MYSQL_USERNAME: 'root'
-    #         MYSQL_PASSWORD: '!auctionkuy123'
-    #         MYSQL_DATABASE: 'auctionkuy'
-    #         REDIS_HOST: 'redis'
-    #         REDIS_PASSWORD: '!auctionkuy123'
-    #         REDIS_DB: '0'
-    #     ports:
-    #         - '8081:8081'
+    api:
+        container_name: auctionkuy-api
+        build: ./api/
+        restart: always
+        environment: 
+            GIN_MODE: 'debug'
+            SERVER_HOST : ':8080'
+            MAX_PROCESS_NUMBER: '2'
+            RATE_LIMIT: '5'
+            MYSQL_HOST: 'mysqldb'
+            MYSQL_PORT: '3306'
+            MYSQL_USERNAME: 'root'
+            MYSQL_PASSWORD: '!auctionkuy123'
+            MYSQL_DATABASE: 'auctionkuy'
+            REDIS_HOST: 'redis'
+            REDIS_PASSWORD: '!auctionkuy123'
+            REDIS_DB: '0'
+        ports:
+            - '8080:8080'

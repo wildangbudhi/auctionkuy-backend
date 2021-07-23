@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	v1 "auctionkuy.wildangbudhi.com/depedencyinjection/v1"
 	"auctionkuy.wildangbudhi.com/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +15,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server.Router.LoadHTMLGlob("templates/*")
 	HealthCheckHandler(server)
 
 	depedencyInjection(server)
@@ -22,6 +22,7 @@ func main() {
 }
 
 func depedencyInjection(server *utils.Server) {
+	v1.AuthDI(server)
 }
 
 func HealthCheckHandler(server *utils.Server) {
