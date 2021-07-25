@@ -8,7 +8,7 @@ type Users struct {
 	Name                 *string             `json:"name"`
 	Phone                *domain.PhoneNumber `json:"phone"`
 	NationalIDNumber     *string             `json:"national_id_number"`
-	AvatarURL            *string             `json:"avatar_url"`
+	AvatarURL            *domain.Image       `json:"avatar_url"`
 	FirstLogin           *bool               `json:"first_login"`
 	Locale               *string             `json:"locale"`
 	BankID               *domain.UUID        `json:"bank_id"`

@@ -16,6 +16,10 @@ func (usecase *accountUsecase) Profile(authUserID *domain.UUID) (*account.Users,
 		return nil, err, 500
 	}
 
+	if user.AvatarURL != nil {
+		user.AvatarURL.SetPrefix(usecase.serverConfig.ObjectURLBase)
+	}
+
 	return user, nil, 200
 
 }
