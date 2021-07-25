@@ -16,5 +16,6 @@ func NewAuthHTTPRestHandler(router *gin.RouterGroup, authUsecase auth.AuthUsecas
 	}
 
 	router.GET("/login", handler.Authenticate)
+	router.GET("/refresh", handler.RefreshAccessToken)
 
 }

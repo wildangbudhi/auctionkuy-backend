@@ -16,13 +16,13 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, string, error, domain.HTTPStatusCode) {
+func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, string, int64, error, domain.HTTPStatusCode) {
 
 	var err error
 	var repositoryErrorType domain.RepositoryErrorType
 
 	if appleToken == "" {
-		return "", "", fmt.Errorf("Apple Token cannot be empty"), 400
+		return "", "", -1, fmt.Errorf("Apple Token cannot be empty"), 400
 	}
 
 	var appleKeys *auth.AppleKeys
@@ -31,7 +31,7 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 
 	if err != nil {
 		log.Println(err)
-		return "", "", fmt.Errorf("Apple Token Expired"), 401
+		return "", "", -1, fmt.Errorf("Apple Token Expired"), 401
 	}
 
 	var applePEM []byte
@@ -39,10 +39,8 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 	applePEM, err = getApplePEM(appleToken, appleKeys)
 
 	if err != nil {
-		return "", "", err, 401
+		return "", "", -1, err, 401
 	}
-
-	log.Println(string(applePEM))
 
 	var appleJWT *domain.JWT
 
@@ -50,11 +48,11 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 
 	if err != nil {
 		log.Println(err)
-		return "", "", fmt.Errorf("Apple Token Invalid"), 401
+		return "", "", -1, fmt.Errorf("Apple Token Invalid"), 401
 	}
 
 	if !validateAppleJWT(appleJWT) {
-		return "", "", fmt.Errorf("Apple Token Invalid"), 401
+		return "", "", -1, fmt.Errorf("Apple Token Invalid"), 401
 	}
 
 	var userEmail *domain.Email
@@ -62,7 +60,7 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 	userEmail, err = getEmailFromAppleJWT(appleJWT)
 
 	if err != nil {
-		return "", "", err, 401
+		return "", "", -1, err, 401
 	}
 
 	var isLocaleExists bool
@@ -70,7 +68,7 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 	_, isLocaleExists = usecase.serverConfig.CountryData.PhoneNumberMaps[locale]
 
 	if !isLocaleExists {
-		return "", "", fmt.Errorf("Locale invalid"), 400
+		return "", "", -1, fmt.Errorf("Locale invalid"), 400
 	}
 
 	var user *auth.Users
@@ -90,7 +88,7 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 	} else if err == nil {
 		user.Locale = &locale
 	} else {
-		return "", "", err, 400
+		return "", "", -1, err, 400
 	}
 
 	if repositoryErrorType == domain.RepositoryDataNotFound {
@@ -100,20 +98,21 @@ func (usecase *authUsecase) Authenticate(appleToken, locale string) (string, str
 	}
 
 	if err != nil {
-		return "", "", err, 400
+		return "", "", -1, err, 400
 	}
 
 	var authToken auth.AuthToken = NewAuthToken(usecase.serverConfig.SecretKey, usecase.sessionRepository)
 
 	var token, refreshToken *domain.JWT
+	var tokenExp *domain.Timestamp
 
-	token, refreshToken, err = authToken.GenerateAuthToken(user.ID)
+	token, refreshToken, tokenExp, err = authToken.GenerateAuthToken(user.ID)
 
 	if err != nil {
-		return "", "", err, 500
+		return "", "", -1, err, 500
 	}
 
-	return token.GetToken(), refreshToken.GetToken(), nil, 200
+	return token.GetToken(), refreshToken.GetToken(), tokenExp.GetValue().Unix(), nil, 200
 
 }
 

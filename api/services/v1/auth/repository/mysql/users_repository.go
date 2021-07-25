@@ -64,8 +64,8 @@ func (repo *usersRepository) CreateUser(user *auth.Users) (error, domain.Reposit
 	var queryString string
 
 	queryString = `
-	INSERT INTO users( id, email, locale )
-	VALUES( ?, ?, ? )
+	INSERT INTO users( id, email, locale, first_login )
+	VALUES( ?, ?, ?, ? )
 	`
 
 	statement, err := repo.db.Prepare(queryString)
@@ -81,6 +81,7 @@ func (repo *usersRepository) CreateUser(user *auth.Users) (error, domain.Reposit
 		user.ID,
 		user.Email,
 		user.Locale,
+		user.FirstLogin,
 	)
 
 	if err != nil {

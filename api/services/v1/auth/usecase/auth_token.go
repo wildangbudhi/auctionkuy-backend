@@ -22,9 +22,19 @@ func NewAuthToken(secretKey []byte, sessionRepository auth.SessionRepository) au
 	}
 }
 
-func (obj *authToken) GenerateAuthToken(userID *domain.UUID) (*domain.JWT, *domain.JWT, error) {
+func (obj *authToken) GenerateAuthToken(userID *domain.UUID) (*domain.JWT, *domain.JWT, *domain.Timestamp, error) {
 
 	var err error
+
+	var expTimestamp *domain.Timestamp
+
+	expTimestamp, err = domain.NewNowTimestamp()
+
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	expTimestamp.SetValue(expTimestamp.GetValue().Add(time.Hour * 24))
 
 	var token, refreshToken *domain.JWT
 	var tokenPayload, refreshTokenPayload jwt.MapClaims
@@ -34,13 +44,13 @@ func (obj *authToken) GenerateAuthToken(userID *domain.UUID) (*domain.JWT, *doma
 	tokenPayload = jwt.MapClaims{}
 	tokenPayload["user_id"] = userID
 	tokenPayload["uuid"] = tokenUUID.GetValue()
-	tokenPayload["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	tokenPayload["exp"] = expTimestamp.GetValue().Unix()
 
 	token, err = domain.NewJWTFromPayload(tokenPayload, obj.secretKey, jwt.SigningMethodHS512)
 
 	if err != nil {
 		log.Println(err)
-		return nil, nil, fmt.Errorf("Failed to Generate Session")
+		return nil, nil, nil, fmt.Errorf("Failed to Generate Session")
 	}
 
 	refreshTokenPayload = jwt.MapClaims{}
@@ -51,7 +61,7 @@ func (obj *authToken) GenerateAuthToken(userID *domain.UUID) (*domain.JWT, *doma
 
 	if err != nil {
 		log.Println(err)
-		return nil, nil, fmt.Errorf("Failed to Generate Session")
+		return nil, nil, nil, fmt.Errorf("Failed to Generate Session")
 	}
 
 	var sessionKey string = fmt.Sprintf("auth-token-%s", userID.GetValue())
@@ -63,10 +73,10 @@ func (obj *authToken) GenerateAuthToken(userID *domain.UUID) (*domain.JWT, *doma
 	err = obj.sessionRepository.SetSession(sessionKey, &sessionData, time.Hour*8760)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
-	return token, refreshToken, nil
+	return token, refreshToken, expTimestamp, nil
 
 }
 
@@ -123,14 +133,14 @@ func (obj *authToken) ValidateToken(token *domain.JWT, isRefreshToken bool) erro
 
 }
 
-func (obj *authToken) RegenerateAuthToken(refreshToken *domain.JWT) (*domain.JWT, error) {
+func (obj *authToken) RegenerateAuthToken(refreshToken *domain.JWT) (*domain.JWT, *domain.Timestamp, error) {
 
 	var err error
 
 	err = obj.ValidateToken(refreshToken, true)
 
 	if err != nil {
-		return nil, fmt.Errorf("Refresh Token Invalid")
+		return nil, nil, fmt.Errorf("Refresh Token Invalid")
 	}
 
 	var tokenPayload map[string]interface{} = refreshToken.GetPayload()
@@ -141,28 +151,38 @@ func (obj *authToken) RegenerateAuthToken(refreshToken *domain.JWT) (*domain.JWT
 	userID, keyExist = tokenPayload["user_id"].(string)
 
 	if !keyExist {
-		return nil, fmt.Errorf("Refresh Token Invalid")
+		return nil, nil, fmt.Errorf("Refresh Token Invalid")
 	}
 
 	tokenUUID, keyExist = tokenPayload["uuid"].(string)
 
 	if !keyExist {
-		return nil, fmt.Errorf("Refresh Token Invalid")
+		return nil, nil, fmt.Errorf("Refresh Token Invalid")
 	}
+
+	var expTimestamp *domain.Timestamp
+
+	expTimestamp, err = domain.NewNowTimestamp()
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	expTimestamp.SetValue(expTimestamp.GetValue().Add(time.Hour * 24))
 
 	var newAccessTokenUUID *domain.UUID = domain.NewUUID()
 
 	var newAccessTokenPayload jwt.MapClaims = jwt.MapClaims{}
 	newAccessTokenPayload["user_id"] = userID
 	newAccessTokenPayload["uuid"] = newAccessTokenUUID.GetValue()
-	newAccessTokenPayload["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	newAccessTokenPayload["exp"] = expTimestamp.GetValue().Unix()
 
 	var newAccessToken *domain.JWT
 	newAccessToken, err = domain.NewJWTFromPayload(newAccessTokenPayload, obj.secretKey, jwt.SigningMethodHS512)
 
 	if err != nil {
 		log.Println(err)
-		return nil, fmt.Errorf("Failed to generate new session")
+		return nil, nil, fmt.Errorf("Failed to generate new session")
 	}
 
 	var sessionKey string = fmt.Sprintf("auth-token-%s", userID)
@@ -174,10 +194,10 @@ func (obj *authToken) RegenerateAuthToken(refreshToken *domain.JWT) (*domain.JWT
 	err = obj.sessionRepository.SetSession(sessionKey, &sessionData, 0)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return newAccessToken, nil
+	return newAccessToken, expTimestamp, nil
 
 }
 

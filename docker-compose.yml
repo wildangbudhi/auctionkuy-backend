@@ -17,7 +17,7 @@ services:
         volumes:
           - auctionkuy-mysql-data:/var/lib/mysql
           - ./mysql/schema.sql:/docker-entrypoint-initdb.d/1.sql
-        #   - ./mysqldump-folder/test_data.sql:/docker-entrypoint-initdb.d/2.sql
+          - ./mysql/migration.sql:/docker-entrypoint-initdb.d/2.sql
         ports: 
             - "3306:3306"
 

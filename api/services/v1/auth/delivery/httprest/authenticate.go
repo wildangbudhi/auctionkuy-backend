@@ -8,13 +8,14 @@ import (
 )
 
 type authtenticateRequestBody struct {
-	AppleToken string `json:"apple_token" binding:"required"`
-	Locale     string `json:"locale" binding:"required"`
+	AppleToken *string `json:"apple_token" binding:"required"`
+	Locale     *string `json:"locale" binding:"required"`
 }
 
 type authtenticateResponseBody struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	Expiration   int64  `json:"expiration"`
 }
 
 func (handler *AuthHTTPRestHandler) Authenticate(ctx *gin.Context) {
@@ -34,10 +35,11 @@ func (handler *AuthHTTPRestHandler) Authenticate(ctx *gin.Context) {
 	}
 
 	var aksesToken, refreshToken string
+	var tokenExp int64
 
-	aksesToken, refreshToken, err, statusCode = handler.authUsecase.Authenticate(
-		requestBodyData.AppleToken,
-		requestBodyData.Locale,
+	aksesToken, refreshToken, tokenExp, err, statusCode = handler.authUsecase.Authenticate(
+		*requestBodyData.AppleToken,
+		*requestBodyData.Locale,
 	)
 
 	if err != nil {
@@ -45,6 +47,6 @@ func (handler *AuthHTTPRestHandler) Authenticate(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(int(statusCode), authtenticateResponseBody{AccessToken: aksesToken, RefreshToken: refreshToken})
+	ctx.JSON(int(statusCode), authtenticateResponseBody{AccessToken: aksesToken, RefreshToken: refreshToken, Expiration: tokenExp})
 
 }

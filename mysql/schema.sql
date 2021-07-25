@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: auctionkuy
 -- ------------------------------------------------------
--- Server version	8.0.25
+-- Server version	8.0.26
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,37 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `app_settings`
+--
+
+DROP TABLE IF EXISTS `app_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `app_settings` (
+  `key` varchar(100) NOT NULL,
+  `value` varchar(100) NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `banks`
+--
+
+DROP TABLE IF EXISTS `banks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `banks` (
+  `id` varchar(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `icon_url` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `users`
@@ -28,13 +59,18 @@ CREATE TABLE `users` (
   `name` varchar(100) DEFAULT NULL,
   `phone` varchar(50) DEFAULT NULL,
   `national_id_number` varchar(100) DEFAULT NULL,
-  `avatar_id` varchar(100) DEFAULT NULL,
-  `first_login` tinyint(1) NOT NULL DEFAULT '0',
+  `avatar_url` varchar(100) DEFAULT NULL,
+  `first_login` tinyint(1) NOT NULL DEFAULT '1',
   `locale` varchar(10) DEFAULT NULL,
+  `bank_id` varchar(100) DEFAULT NULL,
+  `bank_account_id` varchar(100) DEFAULT NULL,
+  `bank_account_owner_name` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `users_UN_email` (`email`)
+  UNIQUE KEY `users_UN_email` (`email`),
+  KEY `users_FK_bank_id` (`bank_id`),
+  CONSTRAINT `users_FK_bank_id` FOREIGN KEY (`bank_id`) REFERENCES `banks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -47,4 +83,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-19 11:10:28
+-- Dump completed on 2021-07-25 20:22:59
