@@ -12,7 +12,7 @@ type authRequestHeader struct {
 func (handler *authMiddlewareDelivery) ValidateAccessToken(ctx *gin.Context) {
 
 	var err error
-	var userID string
+	var userID *domain.UUID
 
 	requestHeader := &authRequestHeader{}
 

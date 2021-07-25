@@ -1,0 +1,55 @@
+package httprest
+
+import (
+	"log"
+	"net/http"
+
+	"auctionkuy.wildangbudhi.com/domain"
+	"auctionkuy.wildangbudhi.com/domain/v1/account"
+	"github.com/gin-gonic/gin"
+)
+
+type profileResponseBody struct {
+	Profile *account.Users `json:"profile"`
+}
+
+func (handler *accountHTTPRestHandler) Profile(ctx *gin.Context) {
+
+	var err error
+	var statusCode domain.HTTPStatusCode
+	var authUserID *domain.UUID
+	var user *account.Users
+
+	ctx.Header("Content-Type", "application/json")
+
+	var authHeaderInterface interface{}
+	var isAuthHeaderExists bool = false
+
+	authHeaderInterface, isAuthHeaderExists = ctx.Get("AUTH_HEADER")
+
+	if !isAuthHeaderExists {
+		log.Println("Auth header not found")
+		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: "Unauthorized"})
+		return
+	}
+
+	var isConversionOK bool = false
+
+	authUserID, isConversionOK = authHeaderInterface.(*domain.UUID)
+
+	if !isConversionOK {
+		log.Println("Cannot convert interface{} to *domain.UUID")
+		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: "Unauthorized"})
+		return
+	}
+
+	user, err, statusCode = handler.accountUsecase.Profile(authUserID)
+
+	if err != nil {
+		ctx.JSON(int(statusCode), domain.HTTPErrorResponse{Error: err.Error()})
+		return
+	}
+
+	ctx.JSON(int(statusCode), profileResponseBody{Profile: user})
+
+}

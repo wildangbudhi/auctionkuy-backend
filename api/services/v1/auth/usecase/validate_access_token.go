@@ -9,7 +9,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func (usecase *authUsecase) ValidateAccessToken(token string) (string, error, domain.HTTPStatusCode) {
+func (usecase *authUsecase) ValidateAccessToken(token string) (*domain.UUID, error, domain.HTTPStatusCode) {
 
 	var err error
 
@@ -21,7 +21,13 @@ func (usecase *authUsecase) ValidateAccessToken(token string) (string, error, do
 
 	if err != nil {
 		log.Println(err)
-		return "", fmt.Errorf("Unauthorized"), 401
+		return nil, fmt.Errorf("Unauthorized"), 401
+	}
+
+	err = authToken.ValidateToken(tokenJWT, false)
+
+	if err != nil {
+		return nil, fmt.Errorf("Unauthorized"), 401
 	}
 
 	var userID string
@@ -31,15 +37,18 @@ func (usecase *authUsecase) ValidateAccessToken(token string) (string, error, do
 
 	if !keyExist {
 		log.Println("User ID Payload Not Found")
-		return "", fmt.Errorf("Unauthorized"), 401
+		return nil, fmt.Errorf("Unauthorized"), 401
 	}
 
-	err = authToken.ValidateToken(tokenJWT, false)
+	var userUUID *domain.UUID
+
+	userUUID, err = domain.NewUUIDFromString(userID)
 
 	if err != nil {
-		return "", fmt.Errorf("Unauthorized"), 401
+		log.Println(err)
+		return nil, fmt.Errorf("Unauthorized"), 401
 	}
 
-	return userID, nil, 200
+	return userUUID, nil, 200
 
 }
