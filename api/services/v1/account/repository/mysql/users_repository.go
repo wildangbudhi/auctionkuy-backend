@@ -73,3 +73,65 @@ func (repo *usersRepository) GetUserByID(id *domain.UUID) (*account.Users, error
 	return user, nil, 0
 
 }
+
+func (repo *usersRepository) UpdateUser(user *account.Users) (error, domain.RepositoryErrorType) {
+
+	var err error
+	var queryString string
+	var queryKey interface{} = nil
+
+	queryString = `
+	UPDATE users
+	SET name=?, phone=?, national_id_number=?, avatar_url=?, first_login=?, locale=?, bank_id=?, bank_account_id=?, bank_account_owner_name=?, updated_at=NOW()
+	WHERE
+	`
+
+	if user.ID != nil {
+		queryString += " id=?"
+		queryKey = user.ID
+	} else if user.Email != nil {
+		queryString += " email=?"
+		queryKey = user.Email
+	}
+
+	statement, err := repo.db.Prepare(queryString)
+
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	var res sql.Result
+
+	res, err = statement.Exec(
+		user.Name,
+		user.Phone,
+		user.NationalIDNumber,
+		user.AvatarURL,
+		user.FirstLogin,
+		user.Locale,
+		user.BankID,
+		user.BankAccountID,
+		user.BankAccountOwnerName,
+		queryKey,
+	)
+
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	rowAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	if rowAffected == 0 {
+		return fmt.Errorf("Failed to Insert Update User Data"), domain.RepositoryUpdateDataFailed
+	}
+
+	return nil, 0
+
+}

@@ -157,7 +157,7 @@ func (repo *usersRepository) UpdateUser(user *auth.Users) (error, domain.Reposit
 	}
 
 	if rowAffected == 0 {
-		return fmt.Errorf("Failed to Insert New User"), domain.RepositoryUpdateDataFailed
+		return fmt.Errorf("Failed to Update User Data"), domain.RepositoryUpdateDataFailed
 	}
 
 	return nil, 0

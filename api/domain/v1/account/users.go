@@ -11,11 +11,12 @@ type Users struct {
 	AvatarURL            *string             `json:"avatar_url"`
 	FirstLogin           *bool               `json:"first_login"`
 	Locale               *string             `json:"locale"`
-	BankID               *string             `json:"bank_id"`
+	BankID               *domain.UUID        `json:"bank_id"`
 	BankAccountID        *string             `json:"bank_account_id"`
 	BankAccountOwnerName *string             `json:"bank_account_owner_name"`
 }
 
 type UsersRepository interface {
 	GetUserByID(id *domain.UUID) (*Users, error, domain.RepositoryErrorType)
+	UpdateUser(user *Users) (error, domain.RepositoryErrorType)
 }

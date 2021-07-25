@@ -10,7 +10,7 @@ import (
 )
 
 type profileResponseBody struct {
-	Profile *account.Users `json:"profile"`
+	*account.Users
 }
 
 func (handler *accountHTTPRestHandler) Profile(ctx *gin.Context) {
@@ -50,6 +50,6 @@ func (handler *accountHTTPRestHandler) Profile(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(int(statusCode), profileResponseBody{Profile: user})
+	ctx.JSON(int(statusCode), profileResponseBody{Users: user})
 
 }

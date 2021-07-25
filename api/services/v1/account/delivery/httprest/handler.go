@@ -19,5 +19,6 @@ func NewAccountHTTPRestHandler(router *gin.RouterGroup, accountUsecase account.A
 	}
 
 	router.GET("/profile", handler.authMiddleware.ValidateAccessToken, handler.Profile)
+	router.PATCH("/profile", handler.authMiddleware.ValidateAccessToken, handler.UpdateProfile)
 
 }
