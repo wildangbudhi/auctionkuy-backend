@@ -63,6 +63,9 @@ services:
             REDIS_HOST: 'redis'
             REDIS_PASSWORD: '!auctionkuy123'
             REDIS_DB: '0'
+            MINIO_ENDPOINT": 'minio:9000'
+            MINIO_ACCESS_KEY": 'auctionkuy'
+            MINIO_SECRET_KEY: '!auctionkuy123'
             OBJECT_URL_BASE: 'http://localhost:8080/v1'
         ports:
             - '8080:8080'

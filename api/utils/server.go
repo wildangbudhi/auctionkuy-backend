@@ -86,9 +86,9 @@ func NewServer() (*Server, error) {
 	server.Config.MySQLDatabaseName = Getenv("MYSQL_DATABASE", "auctionkuy")
 
 	// minio (object storage) config
-	server.Config.MinioEnpoint = Getenv("MINIO_ENDPOINT", "minio")
-	server.Config.MinioAccessKey = Getenv("MINIO_ENDPOINT", "auctionkuy")
-	server.Config.MinioSecreteKey = Getenv("MINIO_ENDPOINT", "!auctionkuy123")
+	server.Config.MinioEnpoint = Getenv("MINIO_ENDPOINT", "minio:9000")
+	server.Config.MinioAccessKey = Getenv("MINIO_ACCESS_KEY", "auctionkuy")
+	server.Config.MinioSecreteKey = Getenv("MINIO_SECRET_KEY", "!auctionkuy123")
 	server.Config.ObjectURLBase = Getenv("OBJECT_URL_BASE", "http://localhost:80")
 
 	server.Config.SaltKey = []byte("d\x8f\xef\x83`\xb1*\xd5[\xedu\xdb0\x8bJ\x94\xe0\xf0\xa5\xf1\x91\xc7t\xa0")
