@@ -47,6 +47,55 @@ CREATE TABLE `banks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `transaction_status`
+--
+
+DROP TABLE IF EXISTS `transaction_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `transaction_status` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `seller_command` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `buyer_command` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `seller_step` int DEFAULT NULL,
+  `buyer_step` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `transactions`
+--
+
+DROP TABLE IF EXISTS `transactions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `transactions` (
+  `id` varchar(100) NOT NULL,
+  `transcation_status_id` int DEFAULT NULL,
+  `item_photo_url` varchar(100) DEFAULT NULL,
+  `item_name` varchar(100) DEFAULT NULL,
+  `item_price` float DEFAULT NULL,
+  `seller_id` varchar(100) DEFAULT NULL,
+  `buyer_id` varchar(100) DEFAULT NULL,
+  `shipping_courier` varchar(100) DEFAULT NULL,
+  `shipping_receipt_id` varchar(100) DEFAULT NULL,
+  `packed_item_image_url` varchar(100) DEFAULT NULL,
+  `recieved_item_image_url` varchar(100) DEFAULT NULL,
+  `payment_receipt_image_url` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `transactions_FK_transaction_status_id` (`transcation_status_id`),
+  KEY `transactions_FK_seller_id` (`seller_id`),
+  KEY `transactions_FK_buyer_id` (`buyer_id`),
+  CONSTRAINT `transactions_FK_buyer_id` FOREIGN KEY (`buyer_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `transactions_FK_seller_id` FOREIGN KEY (`seller_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `transactions_FK_transaction_status_id` FOREIGN KEY (`transcation_status_id`) REFERENCES `transaction_status` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `users`
 --
 
@@ -83,4 +132,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-25 20:22:59
+-- Dump completed on 2021-07-26 22:04:44

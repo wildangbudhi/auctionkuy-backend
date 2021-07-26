@@ -21,7 +21,7 @@
 
 LOCK TABLES `app_settings` WRITE;
 /*!40000 ALTER TABLE `app_settings` DISABLE KEYS */;
-INSERT INTO `app_settings` VALUES ('company_bank_account_id','45324314214141213'),('company_bank_account_owner_name','AuctionKuy'),('company_bank_id','c2fc9ac4-9f5a-4b9a-b31c-d45c5ffd76a0');
+INSERT INTO `app_settings` VALUES ('company_bank_account_id','45324314214141213'),('company_bank_account_owner_name','AuctionKuy'),('company_bank_id','c2fc9ac4-9f5a-4b9a-b31c-d45c5ffd76a0'),('escrow_fee','5000');
 /*!40000 ALTER TABLE `app_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -36,12 +36,31 @@ INSERT INTO `banks` VALUES ('7c55b0de-1c84-4048-ab24-022e22c381fd','BRI','assets
 UNLOCK TABLES;
 
 --
+-- Dumping data for table `transaction_status`
+--
+
+LOCK TABLES `transaction_status` WRITE;
+/*!40000 ALTER TABLE `transaction_status` DISABLE KEYS */;
+INSERT INTO `transaction_status` VALUES (1,'Waiting for buyer','Waiting for buyer',1,1),(2,'Waitng for buyer to pay','Waiting for payment',2,1),(3,'Buyer has paid','Waiting seller to ship the item',3,2),(4,'Wating buyer to confirm item arrival','Item Shipped',4,3),(5,'Waiting for money to be received','Transaction Done',5,4),(6,'Transaction Done','Transaction Done',6,4);
+/*!40000 ALTER TABLE `transaction_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `transactions`
+--
+
+LOCK TABLES `transactions` WRITE;
+/*!40000 ALTER TABLE `transactions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping data for table `users`
 --
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('6c286331-662c-4bfa-a29a-62e9c8fb1f35','wildangb2@gmail.com',NULL,NULL,NULL,NULL,1,'id',NULL,NULL,NULL,'2021-07-25 13:03:30','2021-07-25 13:12:19');
+INSERT INTO `users` VALUES ('6c286331-662c-4bfa-a29a-62e9c8fb1f35','wildangb2@gmail.com','Wildan Ghiffarie Budhi','+6285850245410','23321421421312321312','account/profile/avatar/6c286331-662c-4bfa-a29a-62e9c8fb1f35',0,'id','ca9f6c55-f57c-432e-bc9e-958b0ddd73fe','f34q35r3w4fq3d3qr','Wildan Ghiffarie Budhi','2021-07-25 13:03:30','2021-07-26 14:36:44');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +73,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-25 20:23:20
+-- Dump completed on 2021-07-26 22:05:37
