@@ -2,7 +2,6 @@ package assets
 
 import (
 	"auctionkuy.wildangbudhi.com/domain"
-	"github.com/minio/minio-go/v7"
 )
 
 type Banks struct {
@@ -16,5 +15,5 @@ type BanksRepository interface {
 }
 
 type BanksObjectRepository interface {
-	GetBanksLogo(objectName string) (*minio.Object, error)
+	GetBanksLogo(objectName string) ([]byte, string, error)
 }

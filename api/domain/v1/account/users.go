@@ -20,3 +20,6 @@ type UsersRepository interface {
 	GetUserByID(id *domain.UUID) (*Users, error, domain.RepositoryErrorType)
 	UpdateUser(user *Users) (error, domain.RepositoryErrorType)
 }
+
+type UserObjectRepository struct {
+}

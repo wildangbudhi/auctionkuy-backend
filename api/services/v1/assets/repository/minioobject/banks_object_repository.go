@@ -1,6 +1,7 @@
 package minioobject
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
@@ -19,7 +20,7 @@ func NewAppSettingsRepository(minio *minio.Client) assets.BanksObjectRepository 
 	}
 }
 
-func (repo *banksObjectRepository) GetBanksLogo(objectName string) (*minio.Object, error) {
+func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, string, error) {
 
 	var err error
 	var object *minio.Object
@@ -28,9 +29,27 @@ func (repo *banksObjectRepository) GetBanksLogo(objectName string) (*minio.Objec
 
 	if err != nil {
 		log.Panicln(err)
-		return nil, fmt.Errorf("Service Unavailable")
+		return nil, "", fmt.Errorf("Service Unavailable")
 	}
 
-	return object, nil
+	var objectInfo minio.ObjectInfo
+
+	objectInfo, err = object.Stat()
+
+	if err != nil {
+		log.Panicln(err)
+		return nil, "", fmt.Errorf("Service Unavailable")
+	}
+
+	var objectBuffer *bytes.Buffer = new(bytes.Buffer)
+
+	_, err = objectBuffer.ReadFrom(object)
+
+	if err != nil {
+		log.Panicln(err)
+		return nil, "", fmt.Errorf("Service Unavailable")
+	}
+
+	return objectBuffer.Bytes(), objectInfo.ContentType, nil
 
 }
