@@ -6,13 +6,15 @@ import (
 )
 
 type accountUsecase struct {
-	serverConfig    *utils.Config
-	usersRepository account.UsersRepository
+	serverConfig         *utils.Config
+	usersRepository      account.UsersRepository
+	userObjectRepository account.UserObjectRepository
 }
 
-func NewAccountUsecase(serverConfig *utils.Config, usersRepository account.UsersRepository) account.AccountUsecase {
+func NewAccountUsecase(serverConfig *utils.Config, usersRepository account.UsersRepository, userObjectRepository account.UserObjectRepository) account.AccountUsecase {
 	return &accountUsecase{
-		serverConfig:    serverConfig,
-		usersRepository: usersRepository,
+		serverConfig:         serverConfig,
+		usersRepository:      usersRepository,
+		userObjectRepository: userObjectRepository,
 	}
 }

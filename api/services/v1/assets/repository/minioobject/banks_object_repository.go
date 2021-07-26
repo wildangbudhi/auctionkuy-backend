@@ -12,12 +12,14 @@ import (
 )
 
 type banksObjectRepository struct {
-	minio *minio.Client
+	minio      *minio.Client
+	bucketName string
 }
 
-func NewAppSettingsRepository(minio *minio.Client) assets.BanksObjectRepository {
+func NewBanksObjectRepository(minio *minio.Client) assets.BanksObjectRepository {
 	return &banksObjectRepository{
-		minio: minio,
+		minio:      minio,
+		bucketName: "bank-icon",
 	}
 }
 
@@ -26,7 +28,7 @@ func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, stri
 	var err error
 	var object *minio.Object
 
-	object, err = repo.minio.GetObject(context.Background(), "bank-icon", objectName, minio.GetObjectOptions{})
+	object, err = repo.minio.GetObject(context.Background(), repo.bucketName, objectName, minio.GetObjectOptions{})
 
 	if err != nil {
 		log.Println(err)
@@ -43,10 +45,10 @@ func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, stri
 
 		if errResponse.Code == "NoSuchKey" {
 			return nil, "", fmt.Errorf("Data not found"), domain.RepositoryDataNotFound
-		} else {
-			log.Println(errResponse.Code)
-			return nil, "", fmt.Errorf("Service Unavailable"), domain.RepositoryError
 		}
+
+		log.Println(errResponse.Code)
+		return nil, "", fmt.Errorf("Service Unavailable"), domain.RepositoryError
 
 	}
 

@@ -10,7 +10,7 @@ func (usecase *accountUsecase) Profile(authUserID *domain.UUID) (*account.Users,
 	var err error
 	var user *account.Users
 
-	user, err, _ = usecase.usersRepository.GetUserByID(authUserID)
+	user, err, _ = usecase.usersRepository.GetUserByID(authUserID, usecase.serverConfig.ObjectURLBase)
 
 	if err != nil {
 		return nil, err, 500

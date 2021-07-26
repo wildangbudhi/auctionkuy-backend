@@ -1,6 +1,11 @@
 package usecase
 
 import (
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+
 	"auctionkuy.wildangbudhi.com/domain"
 	"auctionkuy.wildangbudhi.com/domain/v1/assets"
 )
@@ -50,6 +55,20 @@ func (usecase *assetsUsecase) AppAssets() (*assets.AppAssets, error, domain.HTTP
 
 		if *appSettings[i].Key == "company_bank_account_owner_name" {
 			appAssets.CompanyBankAccountOwnerName = appSettings[i].Value
+		}
+
+		if *appSettings[i].Key == "escrow_fee" {
+			var escrowFee float64
+
+			escrowFee, err = strconv.ParseFloat(strings.TrimSpace(*appSettings[i].Value), 64)
+
+			if err != nil {
+				log.Panicln(err)
+				return nil, fmt.Errorf("Failed to process app assets"), 400
+			}
+
+			appAssets.EscrowFee = &escrowFee
+
 		}
 
 	}

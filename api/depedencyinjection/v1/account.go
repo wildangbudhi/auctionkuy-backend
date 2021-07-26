@@ -4,6 +4,7 @@ import (
 	"auctionkuy.wildangbudhi.com/domain/v1/account"
 	"auctionkuy.wildangbudhi.com/domain/v1/auth"
 	"auctionkuy.wildangbudhi.com/services/v1/account/delivery/httprest"
+	"auctionkuy.wildangbudhi.com/services/v1/account/repository/minioobject"
 	"auctionkuy.wildangbudhi.com/services/v1/account/repository/mysql"
 	"auctionkuy.wildangbudhi.com/services/v1/account/usecase"
 	"auctionkuy.wildangbudhi.com/utils"
@@ -17,10 +18,12 @@ func AccountHTTPRestDI(server *utils.Server) {
 	var accountUsecase account.AccountUsecase
 	var authMiddleware auth.AuthMiddlewareDelivery
 	var usersRepository account.UsersRepository
+	var userObjectRepository account.UserObjectRepository
 
 	usersRepository = mysql.NewUsersRepository(server.DB)
+	userObjectRepository = minioobject.NewUserObjectRepository(server.ObjectStorage)
 
-	accountUsecase = usecase.NewAccountUsecase(&server.Config, usersRepository)
+	accountUsecase = usecase.NewAccountUsecase(&server.Config, usersRepository, userObjectRepository)
 	authMiddleware = AuthMiddlewareDI(server)
 
 	httprest.NewAccountHTTPRestHandler(route, accountUsecase, authMiddleware)

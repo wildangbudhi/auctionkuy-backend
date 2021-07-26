@@ -22,7 +22,7 @@ func getAssetsUsecase(server *utils.Server) assets.AssetsUsecase {
 
 	appSettingsRepository = mysql.NewAppSettingsRepository(server.DB)
 	banksRepository = mysql.NewBanksRepository(server.DB)
-	banksObjectRepository = minioobject.NewAppSettingsRepository(server.ObjectStorage)
+	banksObjectRepository = minioobject.NewBanksObjectRepository(server.ObjectStorage)
 
 	assetsUsecase = usecase.NewAssetsUsecase(&server.Config, appSettingsRepository, banksRepository, banksObjectRepository)
 

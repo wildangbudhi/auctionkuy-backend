@@ -20,5 +20,6 @@ func NewAccountHTTPRestHandler(router *gin.RouterGroup, accountUsecase account.A
 
 	router.GET("/profile", handler.authMiddleware.ValidateAccessToken, handler.Profile)
 	router.PATCH("/profile", handler.authMiddleware.ValidateAccessToken, handler.UpdateProfile)
+	router.PUT("/profile/avatar", handler.authMiddleware.ValidateAccessToken, handler.UpdateProfileAvatar)
 
 }

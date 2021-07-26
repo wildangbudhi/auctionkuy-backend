@@ -19,7 +19,7 @@ func NewUsersRepository(db *sql.DB) account.UsersRepository {
 	}
 }
 
-func (repo *usersRepository) GetUserByID(id *domain.UUID) (*account.Users, error, domain.RepositoryErrorType) {
+func (repo *usersRepository) GetUserByID(id *domain.UUID, imagePrefix string) (*account.Users, error, domain.RepositoryErrorType) {
 
 	var err error
 	var queryString string = `
@@ -68,6 +68,10 @@ func (repo *usersRepository) GetUserByID(id *domain.UUID) (*account.Users, error
 
 		log.Println(err)
 		return nil, fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	if user.AvatarURL != nil {
+		user.AvatarURL.SetPrefix(imagePrefix)
 	}
 
 	return user, nil, 0

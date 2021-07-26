@@ -13,7 +13,7 @@ func (usecase *accountUsecase) UpdateProfile(authUserID *domain.UUID, name, phon
 	var err error
 	var user *account.Users
 
-	user, err, _ = usecase.usersRepository.GetUserByID(authUserID)
+	user, err, _ = usecase.usersRepository.GetUserByID(authUserID, usecase.serverConfig.ObjectURLBase)
 
 	if err != nil {
 		return nil, err, 500
@@ -91,7 +91,7 @@ func (usecase *accountUsecase) UpdateProfile(authUserID *domain.UUID, name, phon
 		return nil, err, 500
 	}
 
-	user, err, _ = usecase.usersRepository.GetUserByID(authUserID)
+	user, err, _ = usecase.usersRepository.GetUserByID(authUserID, usecase.serverConfig.ObjectURLBase)
 
 	if err != nil {
 		return nil, err, 500

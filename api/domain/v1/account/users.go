@@ -17,10 +17,12 @@ type Users struct {
 }
 
 type UsersRepository interface {
-	GetUserByID(id *domain.UUID) (*Users, error, domain.RepositoryErrorType)
+	GetUserByID(id *domain.UUID, imagePrefix string) (*Users, error, domain.RepositoryErrorType)
 	UpdateUser(user *Users) (error, domain.RepositoryErrorType)
 }
 
 type UserObjectRepository interface {
-	UpdateUserAvatar(userID *domain.UUID) error
+	GetUserAvatar(userID *domain.UUID) ([]byte, string, error, domain.RepositoryErrorType)
+	PutUserAvatar(userID *domain.UUID, data []byte, contentType string) (error, domain.RepositoryErrorType)
+	RemoveUserAvatar(userID *domain.UUID) (error, domain.RepositoryErrorType)
 }

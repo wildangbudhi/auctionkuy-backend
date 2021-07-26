@@ -180,7 +180,7 @@ func getApplePEM(appleToken string, appleKeys *auth.AppleKeys) ([]byte, error) {
 	var appleTokenHeaderB64Encoded string = strings.Split(appleToken, ".")[0]
 	var appleTokenHeaderByte []byte
 
-	appleTokenHeaderByte, err = base64.StdEncoding.DecodeString(appleTokenHeaderB64Encoded)
+	appleTokenHeaderByte, err = base64.RawStdEncoding.DecodeString(appleTokenHeaderB64Encoded)
 
 	if err != nil {
 		log.Println(err)
