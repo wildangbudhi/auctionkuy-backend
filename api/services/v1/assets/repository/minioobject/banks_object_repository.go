@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"auctionkuy.wildangbudhi.com/domain"
 	"auctionkuy.wildangbudhi.com/domain/v1/assets"
 	"github.com/minio/minio-go/v7"
 )
@@ -20,7 +21,7 @@ func NewAppSettingsRepository(minio *minio.Client) assets.BanksObjectRepository 
 	}
 }
 
-func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, string, error) {
+func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, string, error, domain.RepositoryErrorType) {
 
 	var err error
 	var object *minio.Object
@@ -28,8 +29,8 @@ func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, stri
 	object, err = repo.minio.GetObject(context.Background(), "bank-icon", objectName, minio.GetObjectOptions{})
 
 	if err != nil {
-		log.Panicln(err)
-		return nil, "", fmt.Errorf("Service Unavailable")
+		log.Println(err)
+		return nil, "", fmt.Errorf("Service Unavailable"), domain.RepositoryError
 	}
 
 	var objectInfo minio.ObjectInfo
@@ -37,8 +38,16 @@ func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, stri
 	objectInfo, err = object.Stat()
 
 	if err != nil {
-		log.Panicln(err)
-		return nil, "", fmt.Errorf("Service Unavailable")
+
+		var errResponse minio.ErrorResponse = minio.ToErrorResponse(err)
+
+		if errResponse.Code == "NoSuchKey" {
+			return nil, "", fmt.Errorf("Data not found"), domain.RepositoryDataNotFound
+		} else {
+			log.Println(errResponse.Code)
+			return nil, "", fmt.Errorf("Service Unavailable"), domain.RepositoryError
+		}
+
 	}
 
 	var objectBuffer *bytes.Buffer = new(bytes.Buffer)
@@ -46,10 +55,10 @@ func (repo *banksObjectRepository) GetBanksLogo(objectName string) ([]byte, stri
 	_, err = objectBuffer.ReadFrom(object)
 
 	if err != nil {
-		log.Panicln(err)
-		return nil, "", fmt.Errorf("Service Unavailable")
+		log.Println(err)
+		return nil, "", fmt.Errorf("Service Unavailable"), domain.RepositoryError
 	}
 
-	return objectBuffer.Bytes(), objectInfo.ContentType, nil
+	return objectBuffer.Bytes(), objectInfo.ContentType, nil, 0
 
 }

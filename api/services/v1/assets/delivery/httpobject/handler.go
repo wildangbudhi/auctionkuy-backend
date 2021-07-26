@@ -18,6 +18,6 @@ func NewAssetHTTPObjectHandler(router *gin.RouterGroup, assetsUsecase assets.Ass
 		authMiddleware: authMiddleware,
 	}
 
-	router.GET("/banks/:object-name", handler.authMiddleware.ValidateAccessToken, handler.BankObject)
+	router.GET("/banks/:object-name", handler.BankObject)
 
 }

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"fmt"
-	"log"
 
 	"auctionkuy.wildangbudhi.com/domain"
 )
@@ -12,6 +11,7 @@ func (usecase *assetsUsecase) BankObject(objectName string) ([]byte, string, err
 	var err error
 	var object []byte
 	var objectContentType string
+	var repositoryErrorType domain.RepositoryErrorType
 
 	if objectName == "" {
 		return nil, "", fmt.Errorf("Object name invalid"), 400
@@ -19,9 +19,11 @@ func (usecase *assetsUsecase) BankObject(objectName string) ([]byte, string, err
 
 	objectName += ".png"
 
-	log.Println(objectName)
+	object, objectContentType, err, repositoryErrorType = usecase.banksObjectRepository.GetBanksLogo(objectName)
 
-	object, objectContentType, err = usecase.banksObjectRepository.GetBanksLogo(objectName)
+	if repositoryErrorType == domain.RepositoryDataNotFound {
+		return nil, "", fmt.Errorf("Banks icon not found"), 400
+	}
 
 	if err != nil {
 		return nil, "", err, 500

@@ -15,5 +15,5 @@ type BanksRepository interface {
 }
 
 type BanksObjectRepository interface {
-	GetBanksLogo(objectName string) ([]byte, string, error)
+	GetBanksLogo(objectName string) ([]byte, string, error, domain.RepositoryErrorType)
 }

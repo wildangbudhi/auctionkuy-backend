@@ -21,5 +21,6 @@ type UsersRepository interface {
 	UpdateUser(user *Users) (error, domain.RepositoryErrorType)
 }
 
-type UserObjectRepository struct {
+type UserObjectRepository interface {
+	UpdateUserAvatar(userID *domain.UUID) error
 }
