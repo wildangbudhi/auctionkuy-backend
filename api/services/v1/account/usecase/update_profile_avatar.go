@@ -39,7 +39,7 @@ func (usecase *accountUsecase) UpdateProfileAvatar(authUserID *domain.UUID, data
 
 	var newAvatarURL *domain.Image
 
-	newAvatarURL, err = domain.NewImage("account/profile/avater/"+user.ID.GetValue(), nil)
+	newAvatarURL, err = domain.NewImage("account/profile/avatar/"+user.ID.GetValue(), nil)
 
 	if err != nil {
 		return nil, err, 500

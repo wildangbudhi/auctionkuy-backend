@@ -23,7 +23,7 @@ func main() {
 
 func depedencyInjection(server *utils.Server) {
 	v1.AuthHTTPRestDI(server)
-	v1.AccountHTTPRestDI(server)
+	v1.AccountHTTPDI(server)
 	v1.AssetsHTTPDI(server)
 }
 

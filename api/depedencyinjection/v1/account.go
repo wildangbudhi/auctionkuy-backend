@@ -3,6 +3,7 @@ package v1
 import (
 	"auctionkuy.wildangbudhi.com/domain/v1/account"
 	"auctionkuy.wildangbudhi.com/domain/v1/auth"
+	"auctionkuy.wildangbudhi.com/services/v1/account/delivery/httpobject"
 	"auctionkuy.wildangbudhi.com/services/v1/account/delivery/httprest"
 	"auctionkuy.wildangbudhi.com/services/v1/account/repository/minioobject"
 	"auctionkuy.wildangbudhi.com/services/v1/account/repository/mysql"
@@ -11,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AccountHTTPRestDI(server *utils.Server) {
+func AccountHTTPDI(server *utils.Server) {
 
 	var route *gin.RouterGroup = server.Router.Group("/v1/account")
 
@@ -27,5 +28,6 @@ func AccountHTTPRestDI(server *utils.Server) {
 	authMiddleware = AuthMiddlewareDI(server)
 
 	httprest.NewAccountHTTPRestHandler(route, accountUsecase, authMiddleware)
+	httpobject.NewAccountHTTPObjectHandler(route, accountUsecase, authMiddleware)
 
 }
