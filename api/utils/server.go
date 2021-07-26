@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	"github.com/minio/minio-go/v7"
 )
 
 func Getenv(key, defaultValue string) string {
@@ -38,16 +39,20 @@ type Config struct {
 	RedisHost         string
 	RedisPassword     string
 	RedisDB           string
+	MinioEnpoint      string
+	MinioAccessKey    string
+	MinioSecreteKey   string
 	CountryData       CountryDict
 	ObjectURLBase     string
 }
 
 // Server Struct
 type Server struct {
-	Config  Config
-	Router  *gin.Engine
-	DB      *sql.DB
-	RedisDB *redis.Client
+	Config        Config
+	Router        *gin.Engine
+	DB            *sql.DB
+	RedisDB       *redis.Client
+	ObjectStorage *minio.Client
 }
 
 // NewServer is a constructor for Server Struct
@@ -68,15 +73,22 @@ func NewServer() (*Server, error) {
 	server.Config.State = Getenv("GIN_MODE", "debug")
 	server.Config.ServerHost = Getenv("SERVER_HOST", ":80")
 
+	// redis config
 	server.Config.RedisHost = Getenv("REDIS_HOST", "redis")
 	server.Config.RedisPassword = Getenv("REDIS_PASSWORD", "!auctionkuy123")
 	server.Config.RedisDB = Getenv("REDIS_DB", "0")
 
+	// mysql config
 	server.Config.MySQLHost = Getenv("MYSQL_HOST", "mysqldb")
 	server.Config.MySQLPort = Getenv("MYSQL_PORT", "3306")
 	server.Config.MySQLUsername = Getenv("MYSQL_USERNAME", "root")
 	server.Config.MySQLPassword = Getenv("MYSQL_PASSWORD", "!auctionkuy123")
 	server.Config.MySQLDatabaseName = Getenv("MYSQL_DATABASE", "auctionkuy")
+
+	// minio (object storage) config
+	server.Config.MinioEnpoint = Getenv("MINIO_ENDPOINT", "minio")
+	server.Config.MinioAccessKey = Getenv("MINIO_ENDPOINT", "auctionkuy")
+	server.Config.MinioSecreteKey = Getenv("MINIO_ENDPOINT", "!auctionkuy123")
 	server.Config.ObjectURLBase = Getenv("OBJECT_URL_BASE", "http://localhost:80")
 
 	server.Config.SaltKey = []byte("d\x8f\xef\x83`\xb1*\xd5[\xedu\xdb0\x8bJ\x94\xe0\xf0\xa5\xf1\x91\xc7t\xa0")
@@ -111,6 +123,20 @@ func NewServer() (*Server, error) {
 	}
 
 	server.RedisDB = rdb
+
+	var objectStorage *minio.Client
+
+	objectStorage, err = NewMinioConnection(
+		server.Config.MinioEnpoint,
+		server.Config.MinioAccessKey,
+		server.Config.MinioSecreteKey,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	server.ObjectStorage = objectStorage
 
 	var phoneNumberTrie *Trie
 	var phoneNumberMaps map[string]string

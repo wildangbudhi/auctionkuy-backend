@@ -63,6 +63,6 @@ services:
             REDIS_HOST: 'redis'
             REDIS_PASSWORD: '!auctionkuy123'
             REDIS_DB: '0'
-            OBJECT_URL_BASE: 'http://localhost:8080/v1/'
+            OBJECT_URL_BASE: 'http://localhost:8080/v1'
         ports:
             - '8080:8080'
