@@ -329,3 +329,81 @@ func (repo *transactionsRepository) CreateTransaction(transaction *transaction.T
 	return nil, 0
 
 }
+
+func (repo *transactionsRepository) FetchTransactions(userID *domain.UUID, imagePrefix string) ([]transaction.TransactionsThumbnail, error, domain.RepositoryErrorType) {
+
+	var err error
+	var queryString string = `
+	SELECT 
+		t.id,
+		t.transcation_status_id AS status_id,
+		ts.seller_command AS transaction_status_seller_command,
+		ts.buyer_command AS transaction_status_buyer_command,
+		ts.seller_step AS transaction_status_seller_step,
+		ts.buyer_step AS transaction_status_buyer_step,
+		t.item_photo_url,
+		t.item_name,
+		t.seller_id,
+		t.buyer_id,
+		t.created_at,
+		t.updated_at
+	FROM 
+		transactions t 
+	LEFT JOIN
+		transaction_status ts 
+		ON ts.id = t.transcation_status_id 
+	WHERE 
+		t.seller_id = ?
+		OR 
+		t.buyer_id = ?
+	`
+
+	var queryResult *sql.Rows
+	var transactionList []transaction.TransactionsThumbnail = make([]transaction.TransactionsThumbnail, 0)
+
+	queryResult, err = repo.db.Query(queryString, userID, userID)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	defer queryResult.Close()
+
+	for queryResult.Next() {
+
+		var transactionData transaction.TransactionsThumbnail = transaction.TransactionsThumbnail{
+			Status: &transaction.TransactionStatus{},
+		}
+
+		err = queryResult.Scan(
+			&transactionData.ID,
+			&transactionData.Status.ID,
+			&transactionData.Status.SellerCommand,
+			&transactionData.Status.BuyerCommand,
+			&transactionData.Status.SellerStep,
+			&transactionData.Status.BuyerStep,
+			&transactionData.ItemPhotoURL,
+			&transactionData.ItemName,
+			&transactionData.SellerID,
+			&transactionData.BuyerID,
+			&transactionData.CreatedAt,
+			&transactionData.UpdatedAt,
+		)
+
+		if err != nil {
+			fmt.Println(err)
+			return nil, fmt.Errorf("Services Unavailable"), domain.RepositoryError
+		}
+
+		if transactionData.ItemPhotoURL != nil {
+			transactionData.ItemPhotoURL.SetPrefix(imagePrefix)
+		}
+
+		transactionList = append(transactionList, transactionData)
+
+	}
+
+	return transactionList, nil, 0
+
+}

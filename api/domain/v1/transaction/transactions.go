@@ -26,8 +26,20 @@ type Transactions struct {
 	UpdatedAt              *domain.Timestamp  `json:"updated_at"`
 }
 
+type TransactionsThumbnail struct {
+	ID           *domain.UUID       `json:"id"`
+	Status       *TransactionStatus `json:"status,omitempty"`
+	ItemPhotoURL *domain.Image      `json:"item_photo_url"`
+	ItemName     *string            `json:"item_name"`
+	SellerID     *domain.UUID       `json:"seller_id"`
+	BuyerID      *domain.UUID       `json:"buyer_id"`
+	CreatedAt    *domain.Timestamp  `json:"created_at"`
+	UpdatedAt    *domain.Timestamp  `json:"updated_at"`
+}
+
 type TransactionsRepository interface {
 	GetFullTransactionByID(id *domain.UUID, imagePrefix string) (*Transactions, error, domain.RepositoryErrorType)
 	GetTransactionByID(id *domain.UUID, imagePrefix string) (*Transactions, error, domain.RepositoryErrorType)
+	FetchTransactions(userID *domain.UUID, imagePrefix string) ([]TransactionsThumbnail, error, domain.RepositoryErrorType)
 	CreateTransaction(transaction *Transactions) (error, domain.RepositoryErrorType)
 }
