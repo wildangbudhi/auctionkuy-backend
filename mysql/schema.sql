@@ -60,7 +60,7 @@ CREATE TABLE `transaction_status` (
   `seller_step` int DEFAULT NULL,
   `buyer_step` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,6 +75,7 @@ CREATE TABLE `transactions` (
   `transcation_status_id` int DEFAULT NULL,
   `item_photo_url` varchar(100) DEFAULT NULL,
   `item_name` varchar(100) DEFAULT NULL,
+  `description` text,
   `item_price` float DEFAULT NULL,
   `seller_id` varchar(100) DEFAULT NULL,
   `buyer_id` varchar(100) DEFAULT NULL,
@@ -82,6 +83,8 @@ CREATE TABLE `transactions` (
   `shipping_receipt_id` varchar(100) DEFAULT NULL,
   `packed_item_image_url` varchar(100) DEFAULT NULL,
   `recieved_item_image_url` varchar(100) DEFAULT NULL,
+  `buyer_payment_method_id` varchar(100) DEFAULT NULL,
+  `buyer_payment_account` varchar(100) DEFAULT NULL,
   `payment_receipt_image_url` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -89,6 +92,8 @@ CREATE TABLE `transactions` (
   KEY `transactions_FK_transaction_status_id` (`transcation_status_id`),
   KEY `transactions_FK_seller_id` (`seller_id`),
   KEY `transactions_FK_buyer_id` (`buyer_id`),
+  KEY `transactions_FK` (`buyer_payment_method_id`),
+  CONSTRAINT `transactions_FK` FOREIGN KEY (`buyer_payment_method_id`) REFERENCES `banks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `transactions_FK_buyer_id` FOREIGN KEY (`buyer_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `transactions_FK_seller_id` FOREIGN KEY (`seller_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `transactions_FK_transaction_status_id` FOREIGN KEY (`transcation_status_id`) REFERENCES `transaction_status` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -132,4 +137,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-26 22:04:44
+-- Dump completed on 2021-07-28 22:04:35

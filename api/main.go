@@ -25,6 +25,7 @@ func depedencyInjection(server *utils.Server) {
 	v1.AuthHTTPRestDI(server)
 	v1.AccountHTTPDI(server)
 	v1.AssetsHTTPDI(server)
+	v1.TransactionHTTPDI(server)
 }
 
 func HealthCheckHandler(server *utils.Server) {

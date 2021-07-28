@@ -1,6 +1,12 @@
 package transaction
 
-import "encoding/json"
+import (
+	"auctionkuy.wildangbudhi.com/domain"
+)
+
+type TransactionStatusRepository interface {
+	GetStepMax() (*int, *int, error, domain.RepositoryErrorType)
+}
 
 type TransactionStatus struct {
 	ID            *int    `json:"id"`
@@ -10,14 +16,4 @@ type TransactionStatus struct {
 	BuyerStep     *int    `json:"buyer_step"`
 	SellerStepMax *int    `json:"seller_step_max"`
 	BuyerStepMax  *int    `json:"buyer_step_max"`
-}
-
-func (obj *TransactionStatus) MarshalJSON() ([]byte, error) {
-
-	if (TransactionStatus{ID: obj.ID} == *obj) {
-		return json.Marshal(obj.ID)
-	}
-
-	return json.Marshal(obj)
-
 }
