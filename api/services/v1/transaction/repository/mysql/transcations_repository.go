@@ -407,3 +407,78 @@ func (repo *transactionsRepository) FetchTransactions(userID *domain.UUID, image
 	return transactionList, nil, 0
 
 }
+
+func (repo *transactionsRepository) UpdateTransaction(transaction *transaction.Transactions) (error, domain.RepositoryErrorType) {
+
+	var err error
+	var queryString string
+
+	queryString = `
+	UPDATE 
+		transactions
+	SET
+		transcation_status_id=?,
+		item_photo_url=?,
+		item_name=?,
+		description=?,
+		item_price=?,
+		seller_id=?,
+		buyer_id=?,
+		shipping_courier=?,
+		shipping_receipt_id=?,
+		packed_item_image_url=?,
+		recieved_item_image_url=?,
+		buyer_payment_method_id=?,
+		buyer_payment_account=?,
+		payment_receipt_image_url=?,
+		updated_at=NOW()
+	WHERE
+		id = ?
+	`
+
+	statement, err := repo.db.Prepare(queryString)
+
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	var res sql.Result
+
+	res, err = statement.Exec(
+		transaction.StatusID,
+		transaction.ItemPhotoURL,
+		transaction.ItemName,
+		transaction.Description,
+		transaction.ItemPrice,
+		transaction.SellerID,
+		transaction.BuyerID,
+		transaction.ShippingCourier,
+		transaction.ShippingReceiptID,
+		transaction.PackedItemImageURL,
+		transaction.RecievedItemImageURL,
+		transaction.BuyerPaymentMethodID,
+		transaction.BuyerPaymentAccount,
+		transaction.PaymentReceiptImageURL,
+		transaction.ID,
+	)
+
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	rowAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Println(err)
+		return fmt.Errorf("Services Unavailable"), domain.RepositoryError
+	}
+
+	if rowAffected == 0 {
+		return fmt.Errorf("Failed to Update User Data"), domain.RepositoryUpdateDataFailed
+	}
+
+	return nil, 0
+
+}

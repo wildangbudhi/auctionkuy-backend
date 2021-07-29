@@ -42,4 +42,5 @@ type TransactionsRepository interface {
 	GetTransactionByID(id *domain.UUID, imagePrefix string) (*Transactions, error, domain.RepositoryErrorType)
 	FetchTransactions(userID *domain.UUID, imagePrefix string) ([]TransactionsThumbnail, error, domain.RepositoryErrorType)
 	CreateTransaction(transaction *Transactions) (error, domain.RepositoryErrorType)
+	UpdateTransaction(transaction *Transactions) (error, domain.RepositoryErrorType)
 }

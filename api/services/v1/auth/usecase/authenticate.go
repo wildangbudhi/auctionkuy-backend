@@ -165,7 +165,20 @@ func validateAppleJWT(appleJWT *domain.JWT) bool {
 		return false
 	}
 
-	if aud != "com.AuctionKuy.Rekber" {
+	var allowedAUD []string = []string{
+		"com.AuctionKuy.Rekber",
+		"com.AuctionKuy.Rekber1",
+	}
+
+	var isAUDValid bool = false
+
+	for i := 0; i < len(allowedAUD); i++ {
+		if aud == allowedAUD[i] {
+			isAUDValid = true
+		}
+	}
+
+	if !isAUDValid {
 		return false
 	}
 
