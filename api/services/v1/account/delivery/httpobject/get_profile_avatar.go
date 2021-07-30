@@ -1,6 +1,8 @@
 package httpobject
 
 import (
+	"log"
+
 	"auctionkuy.wildangbudhi.com/domain"
 	"github.com/gin-gonic/gin"
 )
@@ -29,6 +31,8 @@ func (handler *accountHTTPObjectHandler) GetProfileAvatar(ctx *gin.Context) {
 		ctx.String(int(statusCode), "%s", err.Error())
 		return
 	}
+
+	log.Println(objectContentType)
 
 	ctx.Data(int(statusCode), objectContentType, object)
 
