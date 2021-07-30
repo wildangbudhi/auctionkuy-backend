@@ -49,7 +49,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	err = ctx.Bind(requestForm)
 
 	if err != nil {
-		ctx.String(400, "%s", err.Error())
+		ctx.String(400, "Error disini : %s", err.Error())
 		return
 	}
 
@@ -70,8 +70,6 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 		ctx.String(400, "%s", err.Error())
 		return
 	}
-
-	log.Println(bytesAvatarFile)
 
 	var avatarURL *domain.Image
 
