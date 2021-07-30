@@ -1,6 +1,8 @@
 package httpobject
 
 import (
+	"log"
+	
 	"auctionkuy.wildangbudhi.com/domain"
 	"github.com/gin-gonic/gin"
 )

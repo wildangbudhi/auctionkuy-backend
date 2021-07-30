@@ -24,8 +24,6 @@ func (handler *accountHTTPRestHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	var statusCode domain.HTTPStatusCode
 	var authUserID *domain.UUID
 
-	ctx.Header("Content-Type", "application/json")
-
 	var authHeaderInterface interface{}
 	var isAuthHeaderExists bool = false
 
