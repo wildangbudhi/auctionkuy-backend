@@ -1,4 +1,4 @@
-package httprest
+package httpobject
 
 import (
 	"io/ioutil"
@@ -18,7 +18,7 @@ type updateProfileAvatarResponseBody struct {
 	AvatarURL *domain.Image `json:"avatar_url"`
 }
 
-func (handler *accountHTTPRestHandler) UpdateProfileAvatar(ctx *gin.Context) {
+func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 
 	var err error
 	var statusCode domain.HTTPStatusCode

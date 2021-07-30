@@ -19,5 +19,6 @@ func NewAccountHTTPObjectHandler(router *gin.RouterGroup, accountUsecase account
 	}
 
 	router.GET("/profile/avatar/:userid", handler.authMiddleware.ValidateAccessToken, handler.GetProfileAvatar)
+	router.PUT("/profile/avatar", handler.authMiddleware.ValidateAccessToken, handler.UpdateProfileAvatar)
 
 }
