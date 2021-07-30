@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"mime/multipart"
-	"net/http"
 
 	"auctionkuy.wildangbudhi.com/domain"
 	"github.com/gin-gonic/gin"
@@ -31,7 +30,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 
 	if !isAuthHeaderExists {
 		log.Println("Auth header not found")
-		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: "Unauthorized"})
+		ctx.String(int(statusCode), "%s", "Unauthorized")
 		return
 	}
 
@@ -41,7 +40,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 
 	if !isConversionOK {
 		log.Println("Cannot convert interface{} to *domain.UUID")
-		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: "Unauthorized"})
+		ctx.String(int(statusCode), "%s", err.Error())
 		return
 	}
 
@@ -50,7 +49,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	err = ctx.Bind(requestForm)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: err.Error()})
+		ctx.String(int(statusCode), "%s", err.Error())
 		return
 	}
 
@@ -59,7 +58,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	avatarFileReader, err = requestForm.Avatar.Open()
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: err.Error()})
+		ctx.String(int(statusCode), "%s", err.Error())
 		return
 	}
 
@@ -68,7 +67,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	bytesAvatarFile, err = ioutil.ReadAll(avatarFileReader)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, domain.HTTPErrorResponse{Error: err.Error()})
+		ctx.String(int(statusCode), "%s", err.Error())
 		return
 	}
 
