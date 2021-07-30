@@ -49,7 +49,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	err = ctx.Bind(requestForm)
 
 	if err != nil {
-		ctx.String(int(statusCode), "%s", err.Error())
+		ctx.String(400, "%s", err.Error())
 		return
 	}
 
@@ -58,7 +58,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	avatarFileReader, err = requestForm.Avatar.Open()
 
 	if err != nil {
-		ctx.String(int(statusCode), "%s", err.Error())
+		ctx.String(400, "%s", err.Error())
 		return
 	}
 
@@ -67,9 +67,11 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	bytesAvatarFile, err = ioutil.ReadAll(avatarFileReader)
 
 	if err != nil {
-		ctx.String(int(statusCode), "%s", err.Error())
+		ctx.String(400, "%s", err.Error())
 		return
 	}
+
+	log.Println(bytesAvatarFile)
 
 	var avatarURL *domain.Image
 
@@ -80,7 +82,7 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 	)
 
 	if err != nil {
-		ctx.JSON(int(statusCode), domain.HTTPErrorResponse{Error: err.Error()})
+		ctx.String(int(statusCode), "%s", err.Error())
 		return
 	}
 
