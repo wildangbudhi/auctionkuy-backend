@@ -85,6 +85,8 @@ func (usecase *accountUsecase) UpdateProfile(authUserID *domain.UUID, name, phon
 	var firstTimeLogin bool = false
 	user.FirstLogin = &firstTimeLogin
 
+	user.AvatarURL.SetPrefix("")
+
 	err, _ = usecase.usersRepository.UpdateUser(user)
 
 	if err != nil {
