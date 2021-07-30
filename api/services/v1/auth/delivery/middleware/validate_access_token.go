@@ -14,6 +14,8 @@ func (handler *authMiddlewareDelivery) ValidateAccessToken(ctx *gin.Context) {
 	var err error
 	var userID *domain.UUID
 
+	ctx.Header("Content-Type", "application/json")
+
 	requestHeader := &authRequestHeader{}
 
 	err = ctx.BindHeader(requestHeader)
