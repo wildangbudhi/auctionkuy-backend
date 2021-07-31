@@ -44,12 +44,6 @@ func (handler *accountHTTPObjectHandler) UpdateProfileAvatar(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Request.ParseForm()
-
-	for key, value := range ctx.Request.PostForm {
-		log.Println(key, value)
-	}
-
 	requestForm := &updateProfileAvatarFormBody{}
 
 	err = ctx.Bind(requestForm)
