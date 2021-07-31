@@ -44,3 +44,9 @@ type TransactionsRepository interface {
 	CreateTransaction(transaction *Transactions) (error, domain.RepositoryErrorType)
 	UpdateTransaction(transaction *Transactions) (error, domain.RepositoryErrorType)
 }
+
+type TransactionsObjectRepository interface {
+	GetTransactionObject(objectID *domain.UUID) ([]byte, string, error, domain.RepositoryErrorType)
+	PutTransactionObject(objectID *domain.UUID, data []byte, contentType string) (error, domain.RepositoryErrorType)
+	RemoveUserTransactionObject(objectID *domain.UUID) (error, domain.RepositoryErrorType)
+}

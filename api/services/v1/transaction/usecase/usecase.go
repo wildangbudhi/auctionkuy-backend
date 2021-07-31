@@ -6,15 +6,22 @@ import (
 )
 
 type transactionUsecase struct {
-	serverConfig                *utils.Config
-	transactionsRepository      transaction.TransactionsRepository
-	transactionStatusRepository transaction.TransactionStatusRepository
+	serverConfig                 *utils.Config
+	transactionsRepository       transaction.TransactionsRepository
+	transactionStatusRepository  transaction.TransactionStatusRepository
+	transactionsObjectRepository transaction.TransactionsObjectRepository
 }
 
-func NewTransactionUsecase(serverConfig *utils.Config, transactionsRepository transaction.TransactionsRepository, transactionStatusRepository transaction.TransactionStatusRepository) transaction.TransactionUsecase {
+func NewTransactionUsecase(
+	serverConfig *utils.Config,
+	transactionsRepository transaction.TransactionsRepository,
+	transactionStatusRepository transaction.TransactionStatusRepository,
+	transactionsObjectRepository transaction.TransactionsObjectRepository,
+) transaction.TransactionUsecase {
 	return &transactionUsecase{
-		serverConfig:                serverConfig,
-		transactionsRepository:      transactionsRepository,
-		transactionStatusRepository: transactionStatusRepository,
+		serverConfig:                 serverConfig,
+		transactionsRepository:       transactionsRepository,
+		transactionStatusRepository:  transactionStatusRepository,
+		transactionsObjectRepository: transactionsObjectRepository,
 	}
 }

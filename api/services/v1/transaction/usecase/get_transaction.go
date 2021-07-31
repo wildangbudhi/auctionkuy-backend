@@ -24,22 +24,19 @@ func (usecase *transactionUsecase) GetTransaction(authUserID *domain.UUID, trans
 		return nil, err, 500
 	}
 
-	// var isNotSeller, isNotBuyer bool = true, true
+	var isSeller, isBuyer bool = true, true
 
-	// if transactionData.Seller != nil && transactionData.Seller.ID == authUserID {
-	// 	isNotSeller = false
-	// }
+	if transactionData.Seller != nil && transactionData.Seller.ID != authUserID {
+		isSeller = false
+	}
 
-	// if transactionData.Buyer != nil && transactionData.Buyer.ID == authUserID {
-	// 	isNotBuyer = false
-	// }
+	if transactionData.Buyer != nil && transactionData.Buyer.ID != authUserID {
+		isBuyer = false
+	}
 
-	// log.Println(authUserID)
-	// log.Println(isNotSeller, isNotBuyer)
-
-	// if isNotSeller && isNotBuyer {
-	// 	return nil, fmt.Errorf("Transaction Data Not Found"), 400
-	// }
+	if isSeller || isBuyer {
+		return nil, fmt.Errorf("Transaction Data Not Found"), 400
+	}
 
 	maxBuyerStep, maxSellerStep, err, _ = usecase.transactionStatusRepository.GetStepMax()
 
