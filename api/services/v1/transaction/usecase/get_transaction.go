@@ -24,17 +24,17 @@ func (usecase *transactionUsecase) GetTransaction(authUserID *domain.UUID, trans
 		return nil, err, 500
 	}
 
-	var isSeller, isBuyer bool = true, true
+	var isSeller, isBuyer bool = false, false
 
-	if transactionData.Seller != nil && transactionData.Seller.ID != authUserID {
-		isSeller = false
+	if transactionData.Seller != nil && transactionData.Seller.ID != nil && *transactionData.Seller.ID == *authUserID {
+		isSeller = true
 	}
 
-	if transactionData.Buyer != nil && transactionData.Buyer.ID != authUserID {
-		isBuyer = false
+	if transactionData.Buyer != nil && transactionData.Buyer.ID != nil && *transactionData.Buyer.ID == *authUserID {
+		isBuyer = true
 	}
 
-	if isSeller || isBuyer {
+	if !isSeller && !isBuyer {
 		return nil, fmt.Errorf("Transaction Data Not Found"), 400
 	}
 

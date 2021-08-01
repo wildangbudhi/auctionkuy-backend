@@ -16,7 +16,7 @@ func (usecase *transactionUsecase) UpdateTransactionImages(authUserID *domain.UU
 	var transactionData *transaction.Transactions
 	var response *transaction.TransactionImages = &transaction.TransactionImages{}
 
-	transactionData, err, repositoryErrorType = usecase.transactionsRepository.GetTransactionByID(transactionID, usecase.serverConfig.ObjectURLBase)
+	transactionData, err, repositoryErrorType = usecase.transactionsRepository.GetTransactionByID(transactionID, "")
 
 	if repositoryErrorType == domain.RepositoryDataNotFound {
 		return nil, fmt.Errorf("Transaction Data Not Found"), 400
@@ -26,17 +26,17 @@ func (usecase *transactionUsecase) UpdateTransactionImages(authUserID *domain.UU
 		return nil, err, 500
 	}
 
-	var isSeller, isBuyer bool = true, true
+	var isSeller, isBuyer bool = false, false
 
-	if transactionData.Seller != nil && transactionData.Seller.ID != authUserID {
-		isSeller = false
+	if transactionData.SellerID != nil && *transactionData.SellerID == *authUserID {
+		isSeller = true
 	}
 
-	if transactionData.Buyer != nil && transactionData.Buyer.ID != authUserID {
-		isBuyer = false
+	if transactionData.BuyerID != nil && *transactionData.BuyerID == *authUserID {
+		isBuyer = true
 	}
 
-	if isSeller || isBuyer {
+	if !isSeller && !isBuyer {
 		return nil, fmt.Errorf("Transaction Data Not Found"), 400
 	}
 
@@ -73,7 +73,7 @@ func (usecase *transactionUsecase) UpdateTransactionImages(authUserID *domain.UU
 
 		var newImageURL *domain.Image
 
-		newImageURL, err = domain.NewImage("transaction"+authUserID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
+		newImageURL, err = domain.NewImage("transaction/"+transactionID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
 
 		if err != nil {
 			return nil, err, 400
@@ -116,7 +116,7 @@ func (usecase *transactionUsecase) UpdateTransactionImages(authUserID *domain.UU
 
 		var newImageURL *domain.Image
 
-		newImageURL, err = domain.NewImage("transaction"+authUserID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
+		newImageURL, err = domain.NewImage("transaction/"+transactionID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
 
 		if err != nil {
 			return nil, err, 400
@@ -159,7 +159,7 @@ func (usecase *transactionUsecase) UpdateTransactionImages(authUserID *domain.UU
 
 		var newImageURL *domain.Image
 
-		newImageURL, err = domain.NewImage("transaction"+authUserID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
+		newImageURL, err = domain.NewImage("transaction/"+transactionID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
 
 		if err != nil {
 			return nil, err, 400
@@ -202,7 +202,7 @@ func (usecase *transactionUsecase) UpdateTransactionImages(authUserID *domain.UU
 
 		var newImageURL *domain.Image
 
-		newImageURL, err = domain.NewImage("transaction"+authUserID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
+		newImageURL, err = domain.NewImage("transaction/"+transactionID.GetValue()+"/image/"+newObjectUUID.GetValue(), nil)
 
 		if err != nil {
 			return nil, err, 400

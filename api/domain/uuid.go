@@ -56,7 +56,20 @@ func (obj *UUID) MarshalJSON() ([]byte, error) {
 }
 
 func (obj *UUID) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &obj.value)
+
+	var err error
+	err = json.Unmarshal(data, &obj.value)
+
+	if err != nil {
+		return err
+	}
+
+	if !obj.validateUUID() {
+		return fmt.Errorf("UUID Format Invalid")
+	}
+
+	return nil
+
 }
 
 func (obj *UUID) Scan(value interface{}) error {

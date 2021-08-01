@@ -13,7 +13,7 @@ func (usecase *transactionUsecase) JoinTransaction(authUserID *domain.UUID, tran
 	var repositoryErrorType domain.RepositoryErrorType
 	var transactionData *transaction.Transactions
 
-	transactionData, err, repositoryErrorType = usecase.transactionsRepository.GetTransactionByID(transactionID, usecase.serverConfig.ObjectURLBase)
+	transactionData, err, repositoryErrorType = usecase.transactionsRepository.GetTransactionByID(transactionID, "")
 
 	if repositoryErrorType == domain.RepositoryDataNotFound {
 		return nil, fmt.Errorf("Transaction Not Found"), 400
