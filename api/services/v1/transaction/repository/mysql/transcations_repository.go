@@ -358,7 +358,7 @@ func (repo *transactionsRepository) FetchTransactions(userID *domain.UUID, image
 		OR 
 		t.buyer_id = ?
 	ORDER BY
-		t.updated_at ASC 
+		t.updated_at DESC 
 	`
 
 	var queryResult *sql.Rows
