@@ -31,6 +31,7 @@ type TransactionsThumbnail struct {
 	Status       *TransactionStatus `json:"status,omitempty"`
 	ItemPhotoURL *domain.Image      `json:"item_photo_url"`
 	ItemName     *string            `json:"item_name"`
+	ItemPrice    *float64           `json:"item_price"`
 	SellerID     *domain.UUID       `json:"seller_id"`
 	BuyerID      *domain.UUID       `json:"buyer_id"`
 	CreatedAt    *domain.Timestamp  `json:"created_at"`
