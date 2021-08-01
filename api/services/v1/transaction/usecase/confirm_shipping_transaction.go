@@ -7,7 +7,7 @@ import (
 	"auctionkuy.wildangbudhi.com/domain/v1/transaction"
 )
 
-func (usecase *transactionUsecase) ConfimrPaymentTransaction(authUserID *domain.UUID, transactionID *domain.UUID, paymentMethodID *domain.UUID, paymentAccount *string) (error, domain.HTTPStatusCode) {
+func (usecase *transactionUsecase) ConfirmShippingTransaction(authUserID *domain.UUID, transactionID *domain.UUID, shippingCourier, shippingReceiptID string) (error, domain.HTTPStatusCode) {
 
 	var err error
 	var repositoryErrorType domain.RepositoryErrorType
@@ -23,18 +23,18 @@ func (usecase *transactionUsecase) ConfimrPaymentTransaction(authUserID *domain.
 		return err, 500
 	}
 
-	if transactionData.BuyerID == nil {
+	if transactionData.SellerID == nil {
 		return fmt.Errorf("Transaction Not Available"), 400
 	}
 
-	if *transactionData.BuyerID != *authUserID {
+	if *transactionData.SellerID != *authUserID {
 		return fmt.Errorf("Transaction Not Available"), 400
 	}
 
-	var newTransactionStatusID int = 3
+	var newTransactionStatusID int = 4
 
-	transactionData.BuyerPaymentMethodID = paymentMethodID
-	transactionData.BuyerPaymentAccount = paymentAccount
+	transactionData.ShippingCourier = &shippingCourier
+	transactionData.ShippingReceiptID = &shippingReceiptID
 	transactionData.StatusID = &newTransactionStatusID
 
 	err, _ = usecase.transactionsRepository.UpdateTransaction(transactionData)
