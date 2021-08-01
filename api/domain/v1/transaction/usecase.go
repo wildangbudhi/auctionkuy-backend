@@ -12,4 +12,5 @@ type TransactionUsecase interface {
 	ConfirmArrivalTransaction(authUserID *domain.UUID, transactionID *domain.UUID) (error, domain.HTTPStatusCode)
 	ConfirmWithdrawalTransaction(authUserID *domain.UUID, transactionID *domain.UUID) (error, domain.HTTPStatusCode)
 	UpdateTransactionImages(authUserID *domain.UUID, transactionID *domain.UUID, images *TransactionImages) (*TransactionImages, error, domain.HTTPStatusCode)
+	GetTransactionImage(authUserID *domain.UUID, transactionID *domain.UUID, objectID *domain.UUID) ([]byte, string, error, domain.HTTPStatusCode)
 }

@@ -19,4 +19,5 @@ func NewTransactionHTTPObjectHandler(router *gin.RouterGroup, transactionUsecase
 	}
 
 	router.PATCH("/:id/image", handler.authMiddleware.ValidateAccessToken, handler.UpdateTransactionImages)
+	router.GET("/:id/image/:object-id", handler.authMiddleware.ValidateAccessToken, handler.GetTransactionImage)
 }
