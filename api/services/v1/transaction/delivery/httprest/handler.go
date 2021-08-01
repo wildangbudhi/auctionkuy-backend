@@ -25,4 +25,5 @@ func NewTransactionHTTPRestHandler(router *gin.RouterGroup, transactionUsecase t
 	router.POST("/:id/confirm/payment", handler.authMiddleware.ValidateAccessToken, handler.ConfirmPaymentTransaction)
 	router.POST("/:id/confirm/shipping", handler.authMiddleware.ValidateAccessToken, handler.ConfirmShippingTransaction)
 	router.GET("/:id/confirm/arrival", handler.authMiddleware.ValidateAccessToken, handler.ConfirmArrivalTransaction)
+	router.GET("/:id/confirm/withdrawal", handler.authMiddleware.ValidateAccessToken, handler.ConfirmWithdrawalTransaction)
 }
