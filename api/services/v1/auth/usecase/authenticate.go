@@ -168,6 +168,8 @@ func validateAppleJWT(appleJWT *domain.JWT) bool {
 	var allowedAUD []string = []string{
 		"com.AuctionKuy.Rekber",
 		"com.AuctionKuy.Rekber1",
+		"com.AuctionKuy.Rekber2",
+		"com.AuctionKuy.Rekber3",
 	}
 
 	var isAUDValid bool = false
